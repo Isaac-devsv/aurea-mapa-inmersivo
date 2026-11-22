@@ -1,15 +1,14 @@
-# ÁUREA · Mapa inmersivo de bienes raíces — El Salvador
+# MANÁ Bienes Raíces · Mapa inmersivo de El Salvador
 
-Experiencia web interactiva: mapa de El Salvador → vuelo entre nubes → vista aérea de dron → recorrido 360° dentro de la residencia.
+Experiencia web de MANÁ Bienes Raíces: mapa de El Salvador por departamentos → mapa de calles del departamento con marcadores de casa (estilo Airbnb) → vuelo entre nubes → vista de dron → recorrido 360° dentro de la casa.
 
-Propiedades demo: Sonsonate (Los Cóbanos), San Salvador (Escalón), Santa Ana (Ilamatepec), San Miguel.
+- HTML/CSS/JS sin build. Leaflet (mapa), GSAP (animación), Pannellum (visor 360°).
+- Identidad según el manual de marca MANÁ: logo vectorial, azul #024C7E, verde #69B12F, Montserrat + Nunito Sans.
+- Precarga en la pantalla de carga; videos y primer panorama de cada casa se descargan al entrar a su departamento.
+- Responsive (móvil, tablet, escritorio), giroscopio en móviles, `prefers-reduced-motion`.
 
-- HTML/CSS/JS sin build. GSAP para animación, Pannellum para el visor 360°.
-- Pantalla de carga con precarga real de fuentes, nubes, posters y miniaturas; luego prefetch en segundo plano de videos (como blob) y panoramas.
-- Responsive (móvil, tablet, escritorio, horizontal), giroscopio en móviles, `prefers-reduced-motion`.
+## Agregar o editar casas
+Arreglo `PROPS` al inicio de `assets/js/mana.js` (departamento, coordenadas, precio, video y escenas 360°).
 
 ## Créditos
-- Cartografía: Natural Earth (dominio público)
-- Panoramas 360°: Poly Haven (CC0)
-- Videos de dron: Coverr (licencia libre)
-- Nombres, precios y especificaciones son ilustrativos.
+Cartografía: Natural Earth · Mapas: © colaboradores de OpenStreetMap · Panoramas 360°: Poly Haven (CC0) · Videos de dron: Coverr. Propiedades, precios y medidas son ilustrativos.
