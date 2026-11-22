@@ -247,7 +247,9 @@ em{font-style:italic;color:var(--gold-2)}
   .map-viewport{padding:0;padding-top:2vh;perspective:1100px}
   .map-plane{width:min(112vw,900px)}
   .pin[data-id="sanmiguel"] .pin__stand{--ax:-84%}
-  .pin[data-id="sonsonate"] .pin__stand{--ax:-22%}
+  .pin[data-id="sonsonate"] .pin__stand{--ax:-58%}
+  .pin__stand,.pin .pin__label{pointer-events:none}
+  .pin button{left:-22px;top:-22px;width:44px;height:44px}
   .map-legend{display:none}
   .map-hint{display:block;bottom:calc(112px + env(safe-area-inset-bottom,0px));white-space:nowrap}
   .pin__label{padding:6px 9px 7px}
