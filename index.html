@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ÁUREA · Residencias de autor en El Salvador</title>
+<meta name="description" content="Explora residencias exclusivas en El Salvador con un mapa interactivo, vuelo aéreo y tours inmersivos 360°.">
+<meta name="theme-color" content="#0b1016">
+<meta property="og:title" content="ÁUREA · Residencias de autor en El Salvador">
+<meta property="og:description" content="Mapa interactivo, vista de dron y tours 360° de propiedades exclusivas en Sonsonate, San Salvador, Santa Ana y San Miguel.">
+<meta property="og:image" content="assets/video/sonsonate.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b1016'/%3E%3Cpath d='M32 12 48 52h-6l-4-10H26l-4 10h-6Zm0 12-4.5 12h9Z' fill='%23c9a96e'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/cormorant-garamond-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/manrope-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/pannellum.css" media="print" onload="this.media='all'">
+</head>
+<body class="is-loading">
+
+<!-- ============ LOADER ============ -->
+<div id="loader" role="status" aria-live="polite">
+  <div class="loader__frame">
+    <div class="loader__mark" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <circle class="ring" cx="60" cy="60" r="56"/>
+        <circle class="ring-progress" cx="60" cy="60" r="56"/>
+        <path class="mono" d="M60 26 82 92h-8.5l-5.6-17H52.1l-5.6 17H38Zm0 17.5L54.6 67h10.8Z"/>
+      </svg>
+    </div>
+    <p class="loader__brand">ÁUREA</p>
+    <p class="loader__tag">Residencias de autor · El Salvador</p>
+    <div class="loader__bar"><span id="loaderBar"></span></div>
+    <div class="loader__meta">
+      <span id="loaderMsg">Preparando la experiencia</span>
+      <span id="loaderPct">0%</span>
+    </div>
+  </div>
+  <p class="loader__coords">13°41′N · 89°11′O</p>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header class="topbar">
+  <a class="brand" href="#" aria-label="ÁUREA inicio" data-home>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 10 50 54h-7l-4.4-11H25.4L21 54h-7Zm0 13-5 13h10Z"/></svg>
+    <span>ÁUREA</span><small>Bienes Raíces</small>
+  </a>
+  <nav class="topnav" aria-label="Principal">
+    <a href="#" data-home>Propiedades</a>
+    <a href="#" data-open="about">Nosotros</a>
+    <a href="#" data-open="credits">Créditos</a>
+  </nav>
+  <button class="btn btn--ghost btn--sm" data-open="contact">Agendar visita</button>
+</header>
+
+<main id="app">
+
+  <!-- ============ MAP STAGE ============ -->
+  <section id="stage" aria-label="Mapa interactivo de El Salvador">
+    <div class="stage__bg" aria-hidden="true"></div>
+
+    <div class="intro">
+      <p class="eyebrow"><span class="line"></span>Colección 2026</p>
+      <h1>Residencias <br><em>de autor</em> en <br>El Salvador</h1>
+      <p class="intro__lead">Seleccione una propiedad en el mapa para sobrevolarla, descender entre las nubes y recorrerla por dentro en 360°.</p>
+      <ol class="plist" id="plist"></ol>
+    </div>
+
+    <div class="map-viewport" id="mapViewport">
+      <div class="map-pan" id="mapPan">
+        <div class="map-tilt" id="mapTilt">
+          <div class="map-plane" id="mapPlane">
+            <svg id="mapSvg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+            <div class="pins" id="pins"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-legend" aria-hidden="true">
+      <span class="compass">N</span>
+      <span>El Salvador · 14 departamentos</span>
+      <span class="scale"><i></i>50 km</span>
+    </div>
+    <p class="map-hint" aria-hidden="true">Toque un punto dorado para iniciar el vuelo</p>
+  </section>
+
+  <!-- ============ FLIGHT LAYERS ============ -->
+  <canvas id="clouds" aria-hidden="true"></canvas>
+  <div id="fog" aria-hidden="true"></div>
+  <div id="hud" aria-hidden="true">
+    <div class="hud__row"><span>Altitud</span><b id="hudAlt">8 500 m</b></div>
+    <div class="hud__row"><span>Destino</span><b id="hudDest">—</b></div>
+    <div class="hud__row"><span>Coordenadas</span><b id="hudCoord">—</b></div>
+  </div>
+
+  <!-- ============ AERIAL / PROPERTY ============ -->
+  <section id="aerial" aria-label="Vista aérea de la propiedad" hidden>
+    <div class="aerial__media">
+      <video id="aerialVideo" muted playsinline loop preload="auto"></video>
+    </div>
+    <div class="aerial__shade"></div>
+    <button class="back" id="backToMap"><span aria-hidden="true">←</span> Volver al mapa</button>
+
+    <article class="pcard" id="pcard">
+      <p class="eyebrow"><span class="line"></span><span id="pLoc"></span></p>
+      <h2 id="pName"></h2>
+      <p class="pcard__desc" id="pDesc"></p>
+      <dl class="specs" id="pSpecs"></dl>
+      <div class="pcard__foot">
+        <div class="price"><small>Precio</small><span id="pPrice"></span></div>
+        <button class="btn btn--gold" id="enterHouse">Entrar a la residencia <span class="pill">360°</span></button>
+      </div>
+      <button class="link" data-open="contact">Solicitar información privada</button>
+    </article>
+
+    <div class="aerial__badge"><span class="dot"></span>Vista de dron · en vivo</div>
+  </section>
+
+  <!-- ============ 360 TOUR ============ -->
+  <section id="tour" aria-label="Recorrido 360 de la propiedad" hidden>
+    <div id="pano"></div>
+    <div class="tour__top">
+      <button class="back" id="exitTour"><span aria-hidden="true">←</span> Vista aérea</button>
+      <div class="tour__title"><small id="tLoc"></small><span id="tScene"></span></div>
+      <div class="tour__tools">
+        <button class="icon-btn" id="gyroBtn" title="Mover con el teléfono" aria-label="Activar giroscopio" hidden>
+          <svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M3 9c-1.3 2-1.3 4 0 6M21 9c1.3 2 1.3 4 0 6"/></svg>
+        </button>
+        <button class="icon-btn" id="rotateBtn" title="Rotación automática" aria-label="Rotación automática" aria-pressed="true">
+          <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg>
+        </button>
+        <button class="icon-btn" id="fsBtn" title="Pantalla completa" aria-label="Pantalla completa">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="tour__hint" id="tourHint"><span class="drag-ico" aria-hidden="true"></span>Arrastre para mirar alrededor</div>
+    <nav class="scenes" id="scenes" aria-label="Espacios de la residencia"></nav>
+    <div class="tour__loading" id="tourLoading"><span></span>Cargando espacio</div>
+  </section>
+</main>
+
+<!-- ============ MODALS ============ -->
+<div class="modal" id="modal-contact" role="dialog" aria-modal="true" aria-labelledby="mc-t" hidden>
+  <div class="modal__box">
+    <button class="modal__x" data-close aria-label="Cerrar">×</button>
+    <p class="eyebrow"><span class="line"></span>Atención privada</p>
+    <h3 id="mc-t">Agendar una visita</h3>
+    <form id="contactForm" novalidate>
+      <label>Nombre<input name="n" required autocomplete="name"></label>
+      <label>Correo o WhatsApp<input name="c" required autocomplete="email"></label>
+      <label>Propiedad de interés
+        <select name="p" id="contactProp"></select>
+      </label>
+      <button class="btn btn--gold" type="submit">Enviar solicitud</button>
+      <p class="form-ok" hidden>Gracias. Un asesor le contactará en menos de 24 horas.</p>
+    </form>
+  </div>
+</div>
+<div class="modal" id="modal-about" role="dialog" aria-modal="true" aria-labelledby="ma-t" hidden>
+  <div class="modal__box">
+    <button class="modal__x" data-close aria-label="Cerrar">×</button>
+    <p class="eyebrow"><span class="line"></span>Nosotros</p>
+    <h3 id="ma-t">Bienes raíces con criterio</h3>
+    <p>ÁUREA representa residencias excepcionales en todo El Salvador: de la costa de Sonsonate a las faldas del Ilamatepec, de la Escalón a la llanura de San Miguel. Cada propiedad se presenta con vuelo aéreo y recorrido inmersivo para que pueda conocerla antes de visitarla.</p>
+  </div>
+</div>
+<div class="modal" id="modal-credits" role="dialog" aria-modal="true" aria-labelledby="mcr-t" hidden>
+  <div class="modal__box">
+    <button class="modal__x" data-close aria-label="Cerrar">×</button>
+    <p class="eyebrow"><span class="line"></span>Créditos</p>
+    <h3 id="mcr-t">Medios y datos</h3>
+    <ul class="credits">
+      <li><b>Cartografía:</b> Natural Earth (dominio público).</li>
+      <li><b>Panoramas 360°:</b> Poly Haven — fotografías esféricas reales, licencia CC0.</li>
+      <li><b>Videos de dron:</b> Coverr — licencia libre para uso comercial.</li>
+      <li><b>Visor 360°:</b> Pannellum (MIT). Animación: GSAP.</li>
+      <li>Demostración: nombres de propiedades, precios y especificaciones son ilustrativos.</li>
+    </ul>
+  </div>
+</div>
+
+<noscript><p class="noscript">Esta experiencia requiere JavaScript.</p></noscript>
+
+<script src="assets/js/geo.js"></script>
+<script src="assets/js/gsap.min.js"></script>
+<script src="assets/js/pannellum.js" defer></script>
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>
